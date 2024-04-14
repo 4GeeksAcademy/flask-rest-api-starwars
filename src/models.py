@@ -9,6 +9,7 @@ class User(db.Model):
     first_name = db.Column(db.String(30), unique=False, nullable=False)
     last_name = db.Column(db.String(30), unique=False, nullable=False)
     username = db.Column(db.String(40), unique=True, nullable=False)
+    favorites = db.relationship('Favorites', backref='user', lazy=True)
     
 
     def __repr__(self):
@@ -30,6 +31,7 @@ class Planets(db.Model):
     diameter = db.Column(db.Integer)
     temperature = db.Column(db.Integer)
     description = db.Column(db.String(400))
+    favorites = db.relationship('Favorites', backref='planet', lazy=True)
 
     def __repr__(self):
         return '<Planets %r>' % self.planet_id
@@ -49,6 +51,7 @@ class People(db.Model):
     person_name = db.Column(db.String(250))
     weight = db.Column(db.Integer)
     height = db.Column(db.Integer)
+    favorites = db.relationship('Favorites', backref='person', lazy=True)
 
     def __repr__(self):
         return '<People %r>' % self.person_id
@@ -61,3 +64,11 @@ class People(db.Model):
             "height": self.height,
             # do not serialize the password, its a security breach
         }
+    
+class Favorites(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('people.person_id'), primary_key=True)
+    planet_id = db.Column(db.Integer, db.ForeignKey('planets.planet_id'), primary_key=True)
+
+    def __repr__(self):
+        return '<Favorites %r>' % self.id
